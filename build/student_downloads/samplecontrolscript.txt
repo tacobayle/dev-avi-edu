@@ -1,0 +1,70 @@
+#!/usr/bin/python3
+
+"""Schedule this ControlScript to force disable the infinite real time metrics on any Virtual Service."""
+
+import os
+import json
+from avi.sdk.avi_api import ApiSession
+import urllib3
+import requests
+
+if hasattr(requests.packages.urllib3, 'disable_warnings'):
+    requests.packages.urllib3.disable_warnings()
+
+if hasattr(urllib3, 'disable_warnings'):
+    urllib3.disable_warnings()
+
+
+def get_api_token():
+    return os.environ.get('API_TOKEN')
+
+
+def get_api_user():
+    return os.environ.get('USER')
+
+
+def get_api_endpoint():
+    return os.environ.get('DOCKER_GATEWAY') or 'localhost'
+
+
+if __name__ == '__main__':
+    api_endpoint = get_api_endpoint()
+    user = get_api_user()
+    token = get_api_token()
+
+    with ApiSession(api_endpoint, user, token=token, tenant='*') as session:
+        resp = session.get('virtualservice',
+                           params={'analytics_policy.metrics_realtime_update.enabled': 'true',
+                                          'analytics_policy.metrics_realtime_update.duration': 0,
+                                          'fields': 'name'})
+        if resp.status_code < 300:
+            resp_json = resp.json()
+            count = resp_json['count']
+            if count == 0:
+                print('No Virtual Services found with real time metrics enabled for infinite time')
+                exit()
+            vs_list = resp_json['results']
+            print(f'{count} Virtual Service(s) with real time metrics enabled for infinite time | ')
+            for vs in vs_list:
+                vs_name = vs['name']
+                vs_uuid = vs['uuid']
+                print(f'Virtual Service {vs_name} has real time metrics enabled for infinite time >> ')
+                data = {
+                    'json_patch': [
+                        {
+                            'op': 'replace',
+                            'path': '/analytics_policy/metrics_realtime_update/enabled',
+                            'value': 'false'
+                        }
+                    ]
+                }
+                upd = session.patch(f'virtualservice/{vs_uuid}',
+                                    data=json.dumps(data))
+                if upd.status_code < 300:
+                    print(f'Infinite real time metrics disabled for Virtual Service {vs_name}')
+                else:
+                    print(f'Failed to disable the infinite real time metrics for Virtual Service {vs_name}')
+                    print(f'Error: {upd.status_code}: {upd.text}')
+                print(' || ')
+        else:
+            print(f'VS Query returned error: {resp}')

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 35: Configuring a GSLB Service - Active/Active Use Case</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<br>
+<br>
+<h1>Lab 35: Configuring a GSLB Service - Active/Active Use Case</h1>
+<h2>Prerequisites</h2>
+<table>
+    <tr>
+        <th class="centered-header">Lab Number</th>
+        <th class="centered-header">Lab Title</th>
+        <th class="centered-header">Status</th>
+    </tr>
+    <tr>
+        <td>32</td>
+        <td>GSLB Infrastructure</td>
+        <td id="statusCell">
+            <div class="loader"></div>
+        </td>
+    </tr>
+</table>
+<br>
+<br>
+<h2>Links</h2>
+<table>
+    <tr>
+        <th class="centered-header">Task Number</th>
+        <th class="centered-header">Step Number</th>
+        <th class="centered-header">links</th>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>2</td>
+        <td><a href="http://gslb-app-active-active.gslb.vclass.local" target="_blank">http://gslb-app-active-active.gslb.vclass.local</a></td>
+    </tr>
+</table>
+<br>
+<br>
+<h2>Commands</h2>
+<table>
+    <tr>
+        <th class="centered-header">Task Number</th>
+        <th class="centered-header">Step Number</th>
+        <th class="centered-header">command</th>
+        <th class="centered-header">Copy</th>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>3</td>
+        <td><code><div id="contentToCopy0">dig gslb-app-active-active.gslb.vclass.local</div></code></td>
+        <td><button id="copyButton0">Copy</button></td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>4</td>
+        <td><code><div id="contentToCopy1">while true ; do dig gslb-app-active-active.gslb.vclass.local +short; sleep 1 ; done</div></code></td>
+        <td><button id="copyButton1">Copy</button></td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>1</td>
+        <td><code><div id="contentToCopy2">dig gslb-app-active-active.gslb.vclass.local</div></code></td>
+        <td><button id="copyButton2">Copy</button></td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>3</td>
+        <td><code><div id="contentToCopy3">while true ; do dig gslb-app-active-active.gslb.vclass.local +short; sleep 1 ; done</div></code></td>
+        <td><button id="copyButton3">Copy</button></td>
+    </tr>
+</table>
+<br>
+<br>
+<script src="lab35.js"></script>
+</body>
+</html>

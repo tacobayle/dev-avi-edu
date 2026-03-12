@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 7: Application - Preserve Client IP - No SNAT</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<br>
+<br>
+<h1>Lab 7: Application - Preserve Client IP - No SNAT</h1>
+<h2>Prerequisites</h2>
+<table>
+    <tr>
+        <th class="centered-header">Lab Number</th>
+        <th class="centered-header">Lab Title</th>
+        <th class="centered-header">Status</th>
+    </tr>
+    <tr>
+        <td>6</td>
+        <td>VCF Network Integration – NSX Cloud Overlay</td>
+        <td id="statusCell">
+            <div class="loader"></div>
+        </td>
+    </tr>
+</table>
+<br>
+<br>
+<div id="button-box">
+    <button id="configButton" type="button">Apply the config.</button>
+</div>
+<br>
+<br>
+<h2>Commands</h2>
+<table>
+    <tr>
+        <th class="centered-header">Task Number</th>
+        <th class="centered-header">Step Number</th>
+        <th class="centered-header">command</th>
+        <th class="centered-header">Copy</th>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>1</td>
+        <td><code><div id="contentToCopy0">shell</div></code></td>
+        <td><button id="copyButton0">Copy</button></td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>2</td>
+        <td><code><div id="contentToCopy1">configure networkservice networkservice-no-snat<br>
+            se_group_ref seg-active-standby<br>
+            vrf_ref SA-T1-NO-SNAT<br>
+            service_type routing_service<br>
+            routing_service<br>
+            floating_intf_ip 23.0.0.10<br>
+            save<br>
+            cloud_ref nsx-overlay-cloud<br>
+            save<br>
+            exit<br></div></code></td>
+        <td><button id="copyButton1">Copy</button></td>
+    </tr>
+</table>
+<br>
+<br>
+<script src="lab07.js"></script>
+</body>
+</html>

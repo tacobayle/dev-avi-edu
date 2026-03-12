@@ -1,0 +1,127 @@
+#cloud-config
+users:
+  - default
+
+ssh_pwauth: True
+
+chpasswd:
+  list: |
+    ubuntu:VMware1!
+  expire: False
+
+hostname: sb-server-02
+
+write_files:
+  - content: |
+      #!/bin/bash
+      # retrieve the network interface names
+      ifaceFirstName=`ip -o link show | awk -F': ' '{print $2}' | head -2 | tail -1`
+      macFirst=`ip -o link show | awk -F'link/ether ' '{print $2}' | awk -F' ' '{print $1}' | head -2 | tail -1`
+      hostname="sb-server-02"
+      ip="192.168.131.11"
+      prefix="24"
+      default_gw="192.168.131.1"
+      echo "${ip} $hostname" | tee -a /etc/hosts
+      cp /etc/netplan/50-cloud-init.yaml /etc/netplan/50-cloud-init.yaml.old
+      echo "network:" | tee /etc/netplan/50-cloud-init.yaml
+      echo "    ethernets:" | tee -a /etc/netplan/50-cloud-init.yaml
+      echo "        $ifaceFirstName:" | tee -a /etc/netplan/50-cloud-init.yaml
+      echo "            dhcp4: false" | tee -a /etc/netplan/50-cloud-init.yaml
+      echo "            addresses: [${ip}/${prefix}]" | tee -a /etc/netplan/50-cloud-init.yaml
+      echo "            match:" | tee -a /etc/netplan/50-cloud-init.yaml
+      echo "                macaddress: $macFirst" | tee -a /etc/netplan/50-cloud-init.yaml
+      echo "            set-name: $ifaceFirstName" | tee -a /etc/netplan/50-cloud-init.yaml
+      echo "            routes:" | tee -a /etc/netplan/50-cloud-init.yaml
+      echo "            - to: default" | tee -a /etc/netplan/50-cloud-init.yaml
+      echo "              via: ${default_gw}" | tee -a /etc/netplan/50-cloud-init.yaml
+      echo "            nameservers:" | tee -a /etc/netplan/50-cloud-init.yaml
+      echo "              addresses: [172.20.110.10]" | tee -a /etc/netplan/50-cloud-init.yaml
+      echo "    version: 2" | tee -a /etc/netplan/50-cloud-init.yaml
+      netplan apply
+      #
+      # apt install
+      #
+      apt update
+      apt install -y jq
+      #
+      #
+      #
+      curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+      sudo chmod 700 get_helm.sh
+      ./get_helm.sh
+      rm -f /tmp/gpg
+      wget https://download.docker.com/linux/ubuntu/gpg -O /tmp/gpg
+      apt-key add /tmp/gpg
+      add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+      K8s_version="v1.32.13-1.1"
+      K8s_version_short=${K8s_version:0:5}
+      K8s_version=${K8s_version:1}
+      curl -fsSL https://pkgs.k8s.io/core:/stable:/$K8s_version_short/deb/Release.key | gpg --dearmor -o /tmp/kubernetes-apt-keyring.gpg
+      echo "deb [signed-by=/tmp/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/$K8s_version_short/deb/ /" | tee /etc/apt/sources.list.d/kubernetes.list
+      apt update
+      docker_version="5:26.1.4-1~ubuntu"
+      apt-get install -y docker-ce=${docker_version}.$(lsb_release -rs)~$(lsb_release -cs)
+      apt-get install -y kubeadm=$K8s_version kubectl=$K8s_version kubelet=$K8s_version
+      #
+      #
+      #
+      bash -c cat << EOF > /etc/containerd/config.toml
+      version = 2
+      [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+        runtime_type = "io.containerd.runc.v2"
+        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+          SystemdCgroup = true
+      EOF
+      #
+      #
+      #
+      node_type="worker"
+      pod_cidr="192.168.0.0/16"
+      systemctl restart containerd docker
+      usermod -a -G docker ubuntu
+      if [[ ${node_type} == "master" ]]; then
+        kubeadm config images pull
+        kubeadm init --pod-network-cidr=${pod_cidr}
+        mkdir -p /home/ubuntu/.kube
+        cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
+        chown ubuntu:ubuntu /home/ubuntu/.kube/config
+        echo "alias k=kubectl" | tee -a /home/ubuntu/.profile
+        echo "source <(kubectl completion bash | sed s/kubectl/k/g)" | tee -a /home/ubuntu/.profile
+        export KUBECONFIG=/etc/kubernetes/admin.conf
+      fi
+      #
+      # Download docker images
+      #
+      docker pull tacobayle/busybox-v1
+      docker pull tacobayle/busybox-v2
+      docker pull tacobayle/busybox-v3
+      #
+      # CNI download images
+      #
+      cni="antrea"
+      cni_version="v1.12.1"
+      if [[ ${node_type} == "master" ]]; then
+        if [ "$cni" == "antrea" ] ; then
+          helm repo add antrea https://charts.antrea.io
+          helm repo update
+          helm upgrade --install antrea antrea/antrea --namespace kube-system --version 2.5.1 --set nodePortLocal.enable=true
+        fi
+        #
+        # K8s generate join command
+        #
+        kubeadm token create --print-join-command | tee /home/ubuntu/join-command
+        sudo chown ubuntu:ubuntu /home/ubuntu/join-command
+      fi
+      #
+      # End of cloud init
+      #
+      echo "cloud init done" | tee /tmp/cloudInitDone.log
+    path: /opt/bootstrap.sh
+    permissions: 0755
+
+  - content: |
+      ubuntu ALL=(ALL) NOPASSWD:ALL
+    path: /etc/sudoers.d/ubuntu
+
+runcmd:
+  - /opt/bootstrap.sh
