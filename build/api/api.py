@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request, jsonify
 import subprocess
 import json
 from flask_restful import Api, Resource, reqparse, abort
@@ -221,6 +221,53 @@ def checkPrerequisitesLab33():
       return "Config. applied", 201
     else:
       return "Prereq. failed", 404
+
+@app.route('/api/quizTest', methods=['POST'])
+def quizTest():
+    answers = request.json
+    score = 0
+    total_questions = 4 # Update this to 10 when you finish the HTML
+    # Question 1 logic
+    if answers.get('q1') == 'Paris':
+        score += 1
+    # Question 2 logic (Checkboxes)
+    q2_answers = answers.get('q2', [])
+    if 'Python' in q2_answers and 'Java' in q2_answers and 'HTML' not in q2_answers:
+        score += 1
+    # Question 3 logic
+    if answers.get('q3') == '10':
+        score += 1
+    # Question 5 logic
+    if answers.get('q5') == 'Mars':
+        score += 1
+    # Calculate percentage
+    grade = (score / total_questions) * 100
+    return jsonify({"grade": grade})
+
+@app.route('/api/quiz_ako_01', methods=['POST'])
+def quiz_ako_01():
+    answers = request.json
+    score = 0
+    total_questions = 5 # Update this to 10 when you finish the HTML
+    # Question 1
+    if answers.get('q1') == 'ako':
+        score += 1
+    # Question 2
+    q2_answers = answers.get('q2', [])
+    if 'Default-Group-provider' in q2_answers and 'crd' in q2_answers and 'Default-Group-tenant' not in q2_answers:
+        score += 1
+    # Question 3
+    if answers.get('q3') == 'node-ip':
+        score += 1
+    # Question 4
+    if answers.get('q4') == 'vCenter':
+        score += 1
+    # Question 5
+    if answers.get('q5') == 'true':
+        score += 1
+    # Calculate percentage
+    grade = (score / total_questions) * 100
+    return jsonify({"grade": grade})
 
 # Start the server
 if __name__ == '__main__':

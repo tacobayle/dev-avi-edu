@@ -352,6 +352,7 @@
         max_vs_per_se: 30
         vcpus_per_se: 1
         memory_per_se: 2048
+        mem_reserve: false
         disk_per_se: 15
         vcenter_clusters:
           cluster_refs:
@@ -388,6 +389,18 @@
             port: 53
             override_network_profile_ref: "/api/networkprofile/?name=System-TCP-Proxy"
         vsvip_ref: "/api/vsvip/?name=vsvip-SB-DNS-01"
+        analytics_policy:
+          udf_log_throttle: 10
+          metrics_realtime_update:
+            duration: 0
+            enabled: true
+          significant_log_throttle: 0
+          client_insights: NO_INSIGHTS
+          full_client_logs:
+            duration: 0
+            throttle: 10
+            enabled: true
+          all_headers: true
 
     - name: Update system config with first DNS VS - vCenter
       vmware.alb.avi_systemconfiguration:

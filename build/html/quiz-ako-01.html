@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AKO Assessment Quiz</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; max-width: 600px; margin: 40px auto; padding: 20px; }
+        .question { margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        #result { margin-top: 20px; font-weight: bold; font-size: 1.2em; color: #2c3e50; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; }
+    </style>
+</head>
+<body>
+<h1>AKO Assessment Quiz</h1>
+<form id="quizForm">
+    <div class="question">
+        <p>1. In which Avi tenant will AKO create object (like Virtual Service)?</p>
+        <input type="radio" name="q1" value="admin"> admin<br>
+        <input type="radio" name="q1" value="ako"> ako<br>
+        <input type="radio" name="q1" value="tenant1"> tenant1
+    </div>
+
+    <div class="question">
+        <p>2. What will be the Service Engine Group used by Virtual Service created by AKO? (Select all)</p>
+        <input type="checkbox" name="q2" value="Default-Group-provider"> Default-Group - Provider mode<br>
+        <input type="checkbox" name="q2" value="Default-Group-tenant"> Default-Group - Tenant mode<br>
+        <input type="checkbox" name="q2" value="crd"> CRD might overwrite the config-map setting
+    </div>
+
+    <div class="question">
+        <p>3. What will be the pool member IP used by Virtual Service created by AKO? (Select all)</p>
+        <input type="radio" name="q3" value="pod-ip"> Pod IP<br>
+        <input type="radio" name="q3" value="node-ip"> Node IP
+    </div>
+
+    <div class="question">
+        <p>4. What will be the cloud type used by AKO? (Select all)</p>
+        <input type="checkbox" name="q4" value="vCenter"> vCenter<br>
+        <input type="checkbox" name="q4" value="NSX"> NSX<br>
+        <input type="checkbox" name="q4" value="No-Orchestrator"> No Orchestrator
+    </div>
+
+    <div class="question">
+        <p>5. Will Service Engine (used by AKO Virtual Service) bypass kube-proxy?</p>
+        <input type="radio" name="q5" value="true"> true<br>
+        <input type="radio" name="q5" value="false"> false
+    </div>
+
+    <button type="submit">Submit Answers</button>
+</form>
+
+<div id="result"></div>
+<script src="quiz-ako-01.js"></script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 #
 sleep 1800
 ips='["192.168.130.10","192.168.130.11","192.168.130.12","192.168.131.10","192.168.131.11","192.168.131.12"]'
-ports='["30001", "30003", "30080", "30000", "30081"]'
+ports='["30001"]'
 webhook_url='https://chat.googleapis.com/v1/spaces/AAQA4IHsZ3w/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=HxKJ-xNo0aRoy6mOIRrPZRizlqgNZz8nCgAFv_LixEA'
 vApp_type="ANS PCT EDU training"
 #

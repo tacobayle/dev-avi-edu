@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Skill Assessment Quiz</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; max-width: 600px; margin: 40px auto; padding: 20px; }
+        .question { margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        #result { margin-top: 20px; font-weight: bold; font-size: 1.2em; color: #2c3e50; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; }
+    </style>
+</head>
+<body>
+<h1>General Knowledge Quiz</h1>
+<form id="quizForm">
+    <div class="question">
+        <p>1. What is the capital of France?</p>
+        <input type="radio" name="q1" value="Paris"> Paris<br>
+        <input type="radio" name="q1" value="London"> London
+    </div>
+
+    <div class="question">
+        <p>2. Which of these are programming languages? (Select all)</p>
+        <input type="checkbox" name="q2" value="Python"> Python<br>
+        <input type="checkbox" name="q2" value="HTML"> HTML<br>
+        <input type="checkbox" name="q2" value="Java"> Java
+    </div>
+
+    <div class="question">
+        <p>3. What is 5 + 5?</p>
+        <input type="text" name="q3" placeholder="Your answer...">
+    </div>
+
+<!--    <div class="question">-->
+<!--        <p>4. Rate your Python confidence (1-10):</p>-->
+<!--        <input type="range" name="q4" min="1" max="10">-->
+<!--    </div>-->
+
+    <div class="question">
+        <p>5. Which planet is known as the Red Planet?</p>
+        <select name="q5">
+            <option value="">Choose...</option>
+            <option value="Mars">Mars</option>
+            <option value="Venus">Venus</option>
+        </select>
+    </div>
+
+    <p><i>(Add questions 6-10 following the patterns above)</i></p>
+
+    <button type="submit">Submit Answers</button>
+</form>
+
+<div id="result"></div>
+<script src="quiz-template.js"></script>
+</body>
+</html>
